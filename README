@@ -1,0 +1,154 @@
+Webduino, a web server library for the Arduino platform
+
+(C) 2009, Ben Combee and Ran Talbott
+
+   Permission is hereby granted, free of charge, to any person
+   obtaining a copy of this software and associated documentation
+   files (the "Software"), to deal in the Software without
+   restriction, including without limitation the rights to use, copy,
+   modify, merge, publish, distribute, sublicense, and/or sell copies
+   of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be
+   included in all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+   ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
+============
+INSTALLATION
+============
+
+With Arduino 0016 or earlier, put the WebServer.h file in the
+hardware/libraries/webduino subdirectory of the arduino tree.
+
+With Arduino 0017 or later, add the Webduino folder to the "libraries"
+folder of your sketchbook directory.  See
+http://arduino.cc/blog/?p=313 for more details on the new setup.
+
+You can put the examples in your own sketchbook directory, or in
+hardware/libraries/webduino/examples, as you prefer.
+
+Please let me know right away if you encounter any bugs, or have any
+suggestions for improvement.
+
+=======
+SUPPORT
+=======
+
+Current code is available from http://code.google.com/p/webduino/.
+There is also a mailing list for developers and users hosted at
+http://groups.google.com/group/webduino.
+
+=======
+HISTORY
+=======
+
+*** Release 1.4.1
+
+Fix some of the examples to use the new readPOSTparam form
+
+*** Release 1.4
+
+Major bug fix: Earlier versions of the code wrote to the Server
+object, not the Client object.  This caused problems if multiple
+connections were attempted at once.
+
+Performance improvement: writes from progmem now buffer up to 32 bytes
+at a time in local RAM.  This allows sending larger TCP/IP packets
+back to the client.
+
+Updated WebServer.h to allow it to be included multiple times.
+
+Added code to WebServer::read() to abort a connection if no data could be
+read from the client after 1 second of trying.  You can change this timeout
+by defining WEBDUINO_READ_TIMEOUT_IN_MS before including WebServer.h
+
+*** Release 1.3.1
+
+Bug fix release. Found a problem when last header received was the
+Content-Lenght header that would cause the web server to hang.  Thanks
+to /warmfusion/ on the Google Code site for a great bug report.
+
+Added more debugging output when ARDUINO_SERIAL_DEBUGGING is set to 2
+or higher.
+
+*** Release 1.3
+
+Updated the library to better process POSTs by only reading at most
+Content-Length bytes.  This fixes a problem where the server hangs
+on some client requests.
+
+Updated the read() call to handle slower links where the server may be
+waiting for more data from the client.  Don't stop reading until the
+connection is terminated or the end of post data.
+
+Added WEBDUINO_SERIAL_DEBUGGING define.  Add the line 
+
+      #define WEBDUINO_SERIAL_DEBUGGING 1
+
+to your code before the #include <WebServer.h> header to cause the
+Webduino code to output the HTTP request to the serial port.
+
+Modified push() to take an int.  You can push(-1) now, but it is
+ignored.
+
+Added readInt() method to read an integer value from the stream.
+
+Fixed a possible security hole where you could cause the code to read
+bad data by sending a POST parameter exactly as long as the buffer.
+
+Added emacs style guidelines at top of source file.
+
+*** Release 1.2.1
+
+Fixed HelloWorld.pde source file which hadn't been updated for 1.2
+library changes.
+
+Added additional version history to README.
+
+*** Release 1.2
+
+This is an update to Ben Combee's Webduino library that adds some
+support for parameters passed as part of the URL.  I'm pretty sure I
+haven't added any new bugs, but it should still be considered "beta".
+
+1. The "user callback" functions have two new parameters: the
+"parameters" part of the URL string, and a flag indicating whether the
+buffer contains all of them (FALSE if part of them had to be
+discarded).
+
+2. Added nextURLparam to parse parameters out of the new buffer.  This
+is designed to allow the user code to extract keywords and values in
+sequence, much like reading a file.  It adds some error checking, so
+that, if the client includes "?password=antidisestablishmentarianism"
+in the URL, the user code can tell that part of the data was left out
+of its 16-byte buffers.
+
+3. Renamed readURLparam to readPOSTparam, because the name was
+confusing with the addition of #2.
+
+4. A new version of processConnection that allows the user to supply a
+URL buffer and specify the size.  The old version that allocates only
+32 bytes is still there.
+
+*** Release 1.1
+
+New example: Web_Image - serving a PNG fileK
+
+New example: Web_AjaxBuzzer - using AJAX libraries from the net
+
+httpSuccess call parameters modified to allow adding headers
+
+Code cleanups
+
+*** Release 1.0
+
+Initial Version
