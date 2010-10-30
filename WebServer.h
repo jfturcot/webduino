@@ -218,7 +218,7 @@ private:
   {
     const char *verb;
     Command *cmd;
-  } m_commands[8];
+  } m_commands[32];
   char m_cmdCount;
 
   void reset();
